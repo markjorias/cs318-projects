@@ -1,0 +1,19 @@
+# Build output (NASM / MinGW / MSVC)
+*.obj
+*.o
+*.exe
+*.lst
+*.map
+*.out
+build/
+
+# IDE / editor folders
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini

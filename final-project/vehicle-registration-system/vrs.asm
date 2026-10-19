@@ -1,5 +1,5 @@
 ; =============================================================================
-; Vehicle Registration System (VRS.asm)
+; Vehicle Registration System (vrs.asm)
 ;
 ; Description:
 ;   Simple in-memory vehicle registration system implemented in x86 (IA-32) NASM
@@ -35,8 +35,8 @@
 ; Build (example) / runtime:
 ;   - This file is written for 32-bit NASM and a C runtime (Windows/Mingw/MSVC).
 ;   - Example (when using a 32-bit toolchain):
-;       nasm -f win32 VRS.asm -o VRS.obj
-;       gcc -m32 VRS.obj -o VRS.exe    # or link with MSVC tools as appropriate
+;       nasm -f win32 vrs.asm -o vrs.obj
+;       gcc vrs.obj -o vrs.exe         # 32-bit MinGW gcc, or link with MSVC tools
 ;
 ; Limitations and TODOs:
 ;   - Max records: 20. No dynamic allocation.
@@ -65,7 +65,7 @@ section .data
     scan_plate   db " %31[^", 10, "]", 0
     add_success  db 13, 10, 'Vehicle added successfully!', 13, 10, 10, 0
     err_choice   db 13, 10, 'Invalid choice. Please enter 0-6.', 13, 10, 0
-    err_dupplate db 13, 10, 'Error: Plate number already exists. Enter a different plate.', 13, 10, 0
+    err_duplicate db 13, 10, 'Error: Plate number already exists. Enter a different plate.', 13, 10, 0
     del_success  db 13, 10, 'Vehicle deleted successfully!', 13, 10, 0
     not_found    db 13, 10, 'No vehicle found.', 13, 10, 0
     prompt_owner_search db 13, 10, 'Enter Owner Name: ', 0
@@ -92,7 +92,7 @@ section .text
     global _main
     extern _printf
     extern _scanf
-	extern _atoi
+    extern _atoi
 
 ; -----------------------------------------------------------------------------
 ; _main
@@ -181,7 +181,7 @@ main_menu:
     jmp main_menu
 
 .after_menu:
-    ; other choices not yet implemented; re-display menu
+    ; unreachable in practice (choice already validated as 0..6); re-display menu
     jmp main_menu
 
 .invalid_choice:
@@ -687,7 +687,7 @@ DisplayAll:
 ; Side-effects:
 ;   - Mutates `owner_names`, `plate_numbers`, and `vehicle_count`.
 ; Notes:
-;   - Deleted_count is stored in `tmp_index` and used to display a success
+;   - deleted_count is stored in `tmp_index` and used to display a success
 ;     message if any deletions occurred.
 ; -----------------------------------------------------------------------------
 DeleteByOwner:
@@ -822,7 +822,7 @@ DeleteByOwner:
 ; Steps:
 ;   - Read owner into `owner_inp`.
 ;   - Read plate into `plate_inp` (loops prompting until a unique plate is
-;     entered; duplicate plates trigger `err_dupplate` and re-prompt).
+;     entered; duplicate plates trigger `err_duplicate` and re-prompt).
 ;   - Copy owner (up to 64 bytes including terminating NUL) into the next
 ;     slot in `owner_names` and copy plate (up to 32 bytes) into
 ;     `plate_numbers`.
@@ -889,7 +889,7 @@ AddVehicle:
     jmp .save_record
 
 .duplicate_found:
-    push dword err_dupplate
+    push dword err_duplicate
     call _printf
     add esp, 4
     jmp .plate_prompt
